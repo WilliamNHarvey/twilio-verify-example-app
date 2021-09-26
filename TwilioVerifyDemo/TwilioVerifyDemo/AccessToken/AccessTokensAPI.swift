@@ -40,6 +40,7 @@ enum NetworkError: LocalizedError {
 
 protocol AccessTokensAPI {
   func accessTokens(at url: String, identity: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ())
+    func accessTokensGet(at url: String, identity: String, oauthToken: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ())
 }
 
 class AccessTokensAPIClient: AccessTokensAPI {
@@ -83,4 +84,38 @@ class AccessTokensAPIClient: AccessTokensAPI {
     }
     task.resume()
   }
+    
+
+    func accessTokensGet(at url: String, identity: String, oauthToken: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ()) {
+        guard var url = URLComponents(string: url) else {
+            failure(NetworkError.invalidURL)
+            return
+        }
+
+        url.queryItems = [
+            URLQueryItem(name: "identity", value: identity)
+        ]
+        
+        var request = URLRequest(url: url.url!)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(oauthToken)", forHTTPHeaderField: "Authorization")
+
+        let task = urlSession.dataTask(with: request) { data, response, error in
+        if let error = error {
+          failure(error)
+          return
+        }
+        guard response != nil else {
+          failure(NetworkError.invalidResponse)
+          return
+        }
+        guard let data = data,
+              let response = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) else {
+          failure(NetworkError.invalidData)
+          return
+        }
+            success(response)
+        }
+        task.resume()
+    }
 }

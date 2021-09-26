@@ -20,7 +20,8 @@ import Foundation
 import TwilioVerify
 
 protocol CreateFactorPresentable {
-  func create(withIdentity identity: String?, accessTokenURL: String?)
+  func createOld(withIdentity identity: String?, accessTokenURL: String?)
+  func create(withIdentity identity: String?, accessTokenURL: String?, oauthAccessToken: String?)
   func accessTokenURL() -> String?
 }
 
@@ -41,7 +42,7 @@ class CreateFactorPresenter {
 }
 
 extension CreateFactorPresenter: CreateFactorPresentable {
-  func create(withIdentity identity: String?, accessTokenURL: String?) {
+    func createOld(withIdentity identity: String?, accessTokenURL: String?) {
     guard let identity = identity, !identity.isEmpty else {
       view?.showAlert(withMessage: "Invalid Identity")
       return
@@ -56,7 +57,52 @@ extension CreateFactorPresenter: CreateFactorPresentable {
       return
     }
     saveAccessTokenURL(url)
-    accessTokensAPI.accessTokens(at: url, identity: identity, success: { [weak self] response in
+      accessTokensAPI.accessTokens(at: url, identity: identity, success: { [weak self] response in
+      guard let strongSelf = self else { return }
+      let factorName = "\(identity)'s Factor"
+      strongSelf.createFactor(response, withFactorName: factorName, deviceToken: deviceToken, success: { factor in
+        strongSelf.verify(factor, success: { _ in
+          strongSelf.view?.stopLoader()
+          strongSelf.view?.dismissView()
+        }) { error in
+          guard let strongSelf = self else { return }
+          DispatchQueue.main.async {
+            strongSelf.view?.showAlert(withMessage: error.errorMessage)
+          }
+        }
+      }) { error in
+        guard let strongSelf = self else { return }
+        DispatchQueue.main.async {
+          strongSelf.view?.showAlert(withMessage: error.errorMessage)
+        }
+      }
+    }) {[weak self] error in
+      guard let strongSelf = self else { return }
+      DispatchQueue.main.async {
+        strongSelf.view?.showAlert(withMessage: error.localizedDescription)
+      }
+    }
+  }
+    func create(withIdentity identity: String?, accessTokenURL: String?, oauthAccessToken: String?) {
+    guard let identity = identity, !identity.isEmpty else {
+      view?.showAlert(withMessage: "Invalid Identity")
+      return
+    }
+    guard let url = accessTokenURL, !url.isEmpty else {
+      view?.showAlert(withMessage: "Invalid URL")
+      return
+    }
+    guard let oauthToken = oauthAccessToken, !oauthToken.isEmpty else {
+      createOld(withIdentity: identity, accessTokenURL: url)
+      return
+    }
+    let deviceToken = pushToken()
+    guard !deviceToken.isEmpty else {
+      view?.showAlert(withMessage: "Invalid device token for push")
+      return
+    }
+    saveAccessTokenURL(url)
+      accessTokensAPI.accessTokensGet(at: url, identity: identity, oauthToken: oauthToken, success: { [weak self] response in
       guard let strongSelf = self else { return }
       let factorName = "\(identity)'s Factor"
       strongSelf.createFactor(response, withFactorName: factorName, deviceToken: deviceToken, success: { factor in

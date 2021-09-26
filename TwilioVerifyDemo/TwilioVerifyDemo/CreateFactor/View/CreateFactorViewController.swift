@@ -28,6 +28,7 @@ class CreateFactorViewController: UIViewController {
 
   @IBOutlet private weak var identityTextField: UITextField!
   @IBOutlet private weak var accessTokenURLTextField: UITextField!
+  @IBOutlet private weak var oauthAccessTokenTextField: UITextField!
   @IBOutlet private weak var createButton: UIButton!
   @IBOutlet private weak var closeButton: UIBarButtonItem!
   @IBOutlet private weak var loader: UIActivityIndicatorView!
@@ -48,8 +49,9 @@ class CreateFactorViewController: UIViewController {
   @IBAction func createFactor() {
     let identity = identityTextField.text
     let url = accessTokenURLTextField.text
+    let oauthAccessToken = oauthAccessTokenTextField.text
     loader.startAnimating()
-    presenter?.create(withIdentity: identity, accessTokenURL: url)
+    presenter?.create(withIdentity: identity, accessTokenURL: url, oauthAccessToken: oauthAccessToken)
   }
 }
 
