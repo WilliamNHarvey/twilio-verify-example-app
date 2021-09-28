@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="6NF-nA-uIc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="6NF-nA-uIc">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -310,11 +310,36 @@
                                 </constraints>
                             </stackView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="4St-2K-mG1">
-                                <rect key="frame" x="0.0" y="277" width="414" height="619"/>
+                                <rect key="frame" x="0.0" y="420" width="414" height="476"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enroll URL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dr7-B4-zX8" userLabel="Enroll Url">
+                                <rect key="frame" x="16" y="243" width="382" height="20"/>
+                                <accessibility key="accessibilityConfiguration" identifier="enrollUrlInput"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="qaP-lc-Jq1"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" smartDashesType="no"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t1T-uZ-Jg4">
+                                <rect key="frame" x="16" y="315" width="382" height="48"/>
+                                <color key="backgroundColor" red="0.20746630429999999" green="0.47376841310000001" blue="0.75125902889999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <accessibility key="accessibilityConfiguration" identifier="createFactorButton"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="fqo-ls-lAa"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Enroll in MFA">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="createFactor" destination="BYZ-38-t0r" eventType="touchUpInside" id="qxZ-15-VIH"/>
+                                    <action selector="enrollFactor" destination="Z8j-m7-DEe" eventType="touchUpInside" id="UuA-rb-QBD"/>
+                                </connections>
+                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Challenges" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OeS-Kc-tAd">
-                                <rect key="frame" x="16" y="243" width="382" height="30"/>
+                                <rect key="frame" x="16" y="386" width="382" height="30"/>
                                 <accessibility key="accessibilityConfiguration" identifier="challenges"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="cAj-3y-kv3"/>
@@ -323,25 +348,46 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Oauth token" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QpZ-6j-Qff" userLabel="Oauth token">
+                                <rect key="frame" x="16" y="279" width="382" height="20"/>
+                                <accessibility key="accessibilityConfiguration" identifier="oauthTokenInput"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="WjR-De-ATQ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" smartDashesType="no"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="t1T-uZ-Jg4" firstAttribute="leading" secondItem="Nhk-mr-6C3" secondAttribute="leading" constant="16" id="9XV-gj-ORY"/>
                             <constraint firstItem="wew-Lh-x58" firstAttribute="leading" secondItem="Nhk-mr-6C3" secondAttribute="leading" constant="16" id="9vb-vq-3oT"/>
                             <constraint firstAttribute="trailing" secondItem="wew-Lh-x58" secondAttribute="trailing" constant="16" id="Bu7-zx-9g2"/>
-                            <constraint firstItem="OeS-Kc-tAd" firstAttribute="top" secondItem="wew-Lh-x58" secondAttribute="bottom" constant="23" id="GSQ-hy-zBu"/>
+                            <constraint firstItem="OeS-Kc-tAd" firstAttribute="top" secondItem="t1T-uZ-Jg4" secondAttribute="bottom" constant="23" id="GSQ-hy-zBu"/>
                             <constraint firstAttribute="trailing" secondItem="4St-2K-mG1" secondAttribute="trailing" id="KZ7-yx-Ife"/>
                             <constraint firstItem="OeS-Kc-tAd" firstAttribute="trailing" secondItem="wew-Lh-x58" secondAttribute="trailing" id="LfK-Ff-DRm"/>
                             <constraint firstItem="4St-2K-mG1" firstAttribute="leading" secondItem="Nhk-mr-6C3" secondAttribute="leading" id="NBP-X4-Ioc"/>
                             <constraint firstItem="OeS-Kc-tAd" firstAttribute="leading" secondItem="wew-Lh-x58" secondAttribute="leading" id="OEJ-rF-3l6"/>
                             <constraint firstAttribute="bottom" secondItem="4St-2K-mG1" secondAttribute="bottom" id="PK6-YX-x9k"/>
+                            <constraint firstItem="dr7-B4-zX8" firstAttribute="leading" secondItem="Nhk-mr-6C3" secondAttribute="leading" constant="16" id="PUB-6B-k0O"/>
+                            <constraint firstAttribute="trailing" secondItem="dr7-B4-zX8" secondAttribute="trailing" constant="16" id="Pwe-dV-6TC"/>
+                            <constraint firstItem="QpZ-6j-Qff" firstAttribute="top" secondItem="dr7-B4-zX8" secondAttribute="bottom" constant="16" id="RlS-zZ-BFv"/>
+                            <constraint firstItem="dr7-B4-zX8" firstAttribute="top" secondItem="wew-Lh-x58" secondAttribute="bottom" constant="23" id="XYM-0A-gT6"/>
+                            <constraint firstAttribute="trailing" secondItem="QpZ-6j-Qff" secondAttribute="trailing" constant="16" id="YcE-Gl-J5N"/>
+                            <constraint firstAttribute="trailing" secondItem="t1T-uZ-Jg4" secondAttribute="trailing" constant="16" id="ae0-bC-aFo"/>
+                            <constraint firstItem="QpZ-6j-Qff" firstAttribute="leading" secondItem="Nhk-mr-6C3" secondAttribute="leading" constant="16" id="bTD-RV-EiJ"/>
                             <constraint firstItem="4St-2K-mG1" firstAttribute="top" secondItem="OeS-Kc-tAd" secondAttribute="bottom" constant="4" id="cpl-eY-YAx"/>
+                            <constraint firstItem="t1T-uZ-Jg4" firstAttribute="top" secondItem="QpZ-6j-Qff" secondAttribute="bottom" constant="16" id="dKn-ho-50L"/>
                             <constraint firstItem="wew-Lh-x58" firstAttribute="top" secondItem="92A-Lw-g13" secondAttribute="bottom" id="pXA-7S-qKO"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="OQX-zu-67g"/>
                     <connections>
+                        <outlet property="enrollButton" destination="t1T-uZ-Jg4" id="ROh-R9-hQh"/>
+                        <outlet property="enrollUrlTextField" destination="dr7-B4-zX8" id="f8K-Th-pdG"/>
                         <outlet property="identityLabel" destination="dHP-pe-nFV" id="xhX-Ch-ZCL"/>
                         <outlet property="nameLabel" destination="AOe-kC-D0s" id="mVh-bS-t0W"/>
+                        <outlet property="oauthAccessTokenTextField" destination="QpZ-6j-Qff" id="4e1-hq-YQS"/>
                         <outlet property="sidTextField" destination="T6I-Gh-YgV" id="eVk-gY-fYx"/>
                         <outlet property="statusLabel" destination="cpM-pe-GdU" id="tBF-ZQ-rNc"/>
                         <outlet property="tableView" destination="4St-2K-mG1" id="Bwh-yp-h0E"/>

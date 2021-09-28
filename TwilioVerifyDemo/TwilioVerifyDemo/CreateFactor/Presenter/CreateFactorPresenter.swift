@@ -19,6 +19,9 @@ import UIKit
 import Foundation
 import TwilioVerify
 
+let accessTokenEndpoint = "/security/push-access-token"
+let enrollmentEndpoint = "/security/verified-push"
+
 protocol CreateFactorPresentable {
   func createOld(withIdentity identity: String?, accessTokenURL: String?)
   func create(withIdentity identity: String?, accessTokenURL: String?, oauthAccessToken: String?)
@@ -84,10 +87,6 @@ extension CreateFactorPresenter: CreateFactorPresentable {
     }
   }
     func create(withIdentity identity: String?, accessTokenURL: String?, oauthAccessToken: String?) {
-    guard let identity = identity, !identity.isEmpty else {
-      view?.showAlert(withMessage: "Invalid Identity")
-      return
-    }
     guard let url = accessTokenURL, !url.isEmpty else {
       view?.showAlert(withMessage: "Invalid URL")
       return
@@ -102,11 +101,34 @@ extension CreateFactorPresenter: CreateFactorPresentable {
       return
     }
     saveAccessTokenURL(url)
-      accessTokensAPI.accessTokensGet(at: url, identity: identity, oauthToken: oauthToken, success: { [weak self] response in
+      accessTokensAPI.accessTokensGet(at: url + accessTokenEndpoint, oauthToken: oauthToken, success: { [weak self] response in
       guard let strongSelf = self else { return }
-      let factorName = "\(identity)'s Factor"
+      let factorName = "\(response.identity)'s Factor"
       strongSelf.createFactor(response, withFactorName: factorName, deviceToken: deviceToken, success: { factor in
         strongSelf.verify(factor, success: { _ in
+            
+            guard let parameters = try? JSONSerialization.data(withJSONObject: ["sid": factor.sid], options: []) else {
+              return
+            }
+            var request = URLRequest(url: URL(string: url + enrollmentEndpoint)!)
+            request.httpMethod = "POST"
+            request.httpBody = parameters
+            request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(oauthToken)", forHTTPHeaderField: "Authorization")
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                if error != nil {
+                return
+              }
+              guard response != nil else {
+                return
+              }
+              guard let data = data,
+                    let _ = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) else {
+                return
+              }
+            }
+            task.resume()
           strongSelf.view?.stopLoader()
           strongSelf.view?.dismissView()
         }) { error in
@@ -156,7 +178,7 @@ private extension CreateFactorPresenter {
   func createFactor(_ accessToken: AccessTokenResponse, withFactorName factorName: String, deviceToken: String, success: @escaping FactorSuccessBlock, failure: @escaping TwilioVerifyErrorBlock) {
     let payload = PushFactorPayload(
       friendlyName: factorName,
-      serviceSid: accessToken.serviceSid,
+      serviceSid: accessToken.service_sid,
       identity: accessToken.identity,
       pushToken: deviceToken,
       accessToken: accessToken.token

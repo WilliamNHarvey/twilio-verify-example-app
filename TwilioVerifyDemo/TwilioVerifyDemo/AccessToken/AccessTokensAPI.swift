@@ -40,10 +40,11 @@ enum NetworkError: LocalizedError {
 
 protocol AccessTokensAPI {
   func accessTokens(at url: String, identity: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ())
-    func accessTokensGet(at url: String, identity: String, oauthToken: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ())
+  func accessTokensGet(at url: String, oauthToken: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ())
 }
 
 class AccessTokensAPIClient: AccessTokensAPI {
+    
   
   private let urlSession: URLSession
   
@@ -86,15 +87,11 @@ class AccessTokensAPIClient: AccessTokensAPI {
   }
     
 
-    func accessTokensGet(at url: String, identity: String, oauthToken: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ()) {
-        guard var url = URLComponents(string: url) else {
+    func accessTokensGet(at url: String, oauthToken: String, success: @escaping (AccessTokenResponse) -> (), failure: @escaping (Error) -> ()) {
+        guard let url = URLComponents(string: url) else {
             failure(NetworkError.invalidURL)
             return
         }
-
-        url.queryItems = [
-            URLQueryItem(name: "identity", value: identity)
-        ]
         
         var request = URLRequest(url: url.url!)
         request.httpMethod = "GET"
@@ -109,6 +106,8 @@ class AccessTokensAPIClient: AccessTokensAPI {
           failure(NetworkError.invalidResponse)
           return
         }
+    
+            
         guard let data = data,
               let response = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) else {
           failure(NetworkError.invalidData)

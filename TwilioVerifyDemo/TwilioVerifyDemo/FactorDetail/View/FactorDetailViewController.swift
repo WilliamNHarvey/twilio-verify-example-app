@@ -32,6 +32,10 @@ class FactorDetailViewController: UIViewController {
   @IBOutlet private weak var statusLabel: UILabel!
   @IBOutlet private weak var sidTextField: UITextField!
   @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var oauthAccessTokenTextField: UITextField!
+    
+    @IBOutlet private weak var enrollUrlTextField: UITextField!
+    @IBOutlet private weak var enrollButton: UIButton!
   
   var presenter: FactorDetailPresentable!
   
@@ -54,6 +58,37 @@ class FactorDetailViewController: UIViewController {
     
     challengeDetailView.presenter = ChallengeDetailPresenter(withView: challengeDetailView, challengeSid: challenge.sid, factorSid: presenter.factor.sid)
   }
+    
+    @IBAction func enrollFactor() {
+        let url = enrollUrlTextField.text!
+        let oauthToken = oauthAccessTokenTextField.text!
+        guard let url = URL(string: url) else {
+          return
+        }
+
+        guard let parameters = try? JSONSerialization.data(withJSONObject: ["sid": presenter.factor.sid], options: []) else {
+          return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = parameters
+        request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(oauthToken)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if error != nil {
+            return
+          }
+          guard response != nil else {
+            return
+          }
+          guard let data = data,
+                let _ = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) else {
+            return
+          }
+        }
+        task.resume()
+    }
 }
 
 // MARK: - UITableViewDataSource

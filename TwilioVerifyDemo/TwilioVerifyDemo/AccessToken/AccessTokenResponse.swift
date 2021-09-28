@@ -19,7 +19,6 @@ import Foundation
 
 struct AccessTokenResponse: Codable {
   let token: String
-  let serviceSid: String
+  let service_sid: String
   let identity: String
-  let factorType: String
 }
